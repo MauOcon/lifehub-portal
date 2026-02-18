@@ -1,0 +1,25 @@
+// 1. Abstracts
+@import 'abstracts/variables';
+// @import 'abstracts/functions';
+// @import 'abstracts/mixins';
+
+// 2. Vendors
+// @import 'vendors/bootstrap';
+
+// 3. Base
+@import 'base/reset';
+@import 'base/typography';
+
+// 4. Layout
+@import 'layout/app';
+// @import 'layout/header';
+// @import 'layout/navigation';
+
+// 5. Components
+// @import 'components/buttons';
+
+// 6. Pages // NO USAR EN ANGULAR, EN SU LUGAR EL styleUrl
+// @import 'pages/home';
+
+// 7. Themes
+// @import 'themes/default';
