@@ -1,0 +1,107 @@
+<article class="resources-container">
+  <header class="resources-header">
+    <select class="resources-selector" aria-label="Ordenar recursos">
+      <option value="recent">Creados recientemente</option>
+      <option value="modified">Modificados recientemente</option>
+    </select>
+    <button class="btn-new-resource">Nuevo recurso</button>
+  </header>
+
+  <hr class="divider" />
+
+  <h2 class="resources-title">Recursos</h2>
+
+  <section class="resources-content">
+    <!-- Estado: Cargando -->
+    <div *ngIf="state === 'loading'" class="state-message">
+      <p>Cargando recursos...</p>
+    </div>
+
+    <!-- Estado: Error -->
+    <div *ngIf="state === 'error'" class="state-message error">
+      <p>{{ errorMessage }}</p>
+      <button (click)="retry()" class="btn-retry">Reintentar</button>
+    </div>
+
+    <!-- Estado: Éxito -->
+    <ng-container *ngIf="state === 'success'">
+      <div class="filters">
+        <input
+          type="search"
+          class="resources-filter"
+          placeholder="Filtrar por palabra clave"
+          aria-label="Filtrar recursos"
+        />
+      </div>
+
+      <!-- Lista vacía -->
+      <div *ngIf="resources.length === 0" class="state-message empty">
+        <p>No tienes recursos creados aún.</p>
+        <p>Comienza creando tu primer recurso.</p>
+      </div>
+
+      <!-- Lista con datos -->
+      <table *ngIf="resources.length > 0" class="resources-table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Ubicación</th>
+            <th scope="col">Avance</th>
+            <th scope="col">Fecha de actividad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let resource of resources; let i = index"
+            (click)="selectResource(resource)"
+            [class.selected]="selectedResource?.position === resource.position"
+          >
+            <td>{{ i + 1 }}</td>
+            <td>{{ resource.name }}</td>
+            <td>{{ resource.location }}</td>
+            <td>{{ resource.progress }}%</td>
+            <td>{{ resource.activityDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Temario del recurso seleccionado -->
+      <section *ngIf="selectedResource" class="syllabus-section">
+        <h3 class="syllabus-title">Temario de {{ selectedResource.name }}</h3>
+
+        <!-- Sin temario -->
+        <div
+          *ngIf="!selectedResource.syllabus || selectedResource.syllabus.length === 0"
+          class="state-message empty"
+        >
+          <p>No hay temario asignado a este recurso.</p>
+          <button class="btn-add-syllabus">Agregar temario</button>
+        </div>
+
+        <!-- Con temario -->
+        <table
+          *ngIf="selectedResource.syllabus && selectedResource.syllabus.length > 0"
+          class="syllabus-table"
+        >
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Avance</th>
+              <th scope="col">Fecha de actividad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of selectedResource.syllabus">
+              <td>{{ item.number }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.progress }}</td>
+              <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </ng-container>
+  </section>
+</article>

@@ -8,9 +8,16 @@ export const routes: Routes = [
       import('./layouts/lifehub-layout/lifehub-layout').then((m) => m.LifehubLayout),
     children: [
       {
-        path: 'learning',
+        path: 'learning/goals',
         loadComponent: () =>
           import('./contexts/learning/presentation/pages/goals/goals').then((m) => m.Goals),
+      },
+      {
+        path: 'learning/resources',
+        loadComponent: () =>
+          import('./contexts/learning/presentation/pages/resources/resources').then(
+            (m) => m.Resources,
+          ),
       },
       /*  {
         path: 'recipes',

@@ -1,0 +1,12 @@
+.resources-table tbody tr.selected {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.resources-table tbody tr {
+  cursor: pointer;
+}
+
+.resources-table tbody tr:hover {
+  background-color: #f8f8f8;
+}

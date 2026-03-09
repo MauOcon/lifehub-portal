@@ -1,1 +1,64 @@
-<p>goals works!</p>
+<article class="goals-container">
+  <header class="goals-header">
+    <select class="goals-selector" aria-label="Ordenar metas">
+      <option value="recent">Creados recientemente</option>
+      <option value="modified">Modificados recientemente</option>
+    </select>
+    <button class="btn-new-goal">Nueva meta</button>
+  </header>
+
+  <hr class="divider" />
+
+  <h2 class="goals-title">Metas</h2>
+
+  <section class="goals-content">
+    <!-- Estado: Cargando -->
+    <div *ngIf="state === 'loading'" class="state-message">
+      <p>Cargando metas...</p>
+    </div>
+
+    <!-- Estado: Error -->
+    <div *ngIf="state === 'error'" class="state-message error">
+      <p>{{ errorMessage }}</p>
+      <button (click)="retry()" class="btn-retry">Reintentar</button>
+    </div>
+
+    <!-- Estado: Éxito -->
+    <ng-container *ngIf="state === 'success'">
+      <div class="filters">
+        <input
+          type="search"
+          class="goals-filter"
+          placeholder="Filtrar por palabra clave"
+          aria-label="Filtrar metas"
+        />
+      </div>
+
+      <!-- Lista vacía -->
+      <div *ngIf="goals.length === 0" class="state-message empty">
+        <p>No tienes metas creadas aún.</p>
+        <p>Comienza creando tu primera meta.</p>
+      </div>
+
+      <!-- Lista con datos -->
+      <table *ngIf="goals.length > 0" class="goals-table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Avance</th>
+            <th scope="col">Fecha de actividad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let goal of goals; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ goal.name }}</td>
+            <td>{{ goal.progress }}%</td>
+            <td>{{ goal.activityDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+  </section>
+</article>
