@@ -1,6 +1,6 @@
 export interface SyllabusItem {
   number: string;
   name: string;
-  progress: string;
+  progress: number;
   activityDate: Date | null;
 }

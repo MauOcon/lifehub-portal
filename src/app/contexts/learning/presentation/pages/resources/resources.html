@@ -70,18 +70,34 @@
       <section *ngIf="selectedResource" class="syllabus-section">
         <h3 class="syllabus-title">Temario de {{ selectedResource.name }}</h3>
 
-        <!-- Sin temario -->
+        <!-- 🔴 AGREGAR: Cargando temario -->
+        <div *ngIf="syllabusLoading" class="state-message">
+          <p>Cargando temario...</p>
+        </div>
+
+        <!-- 🔴 AGREGAR: Error al cargar temario -->
+        <div *ngIf="syllabusError && !syllabusLoading" class="state-message error">
+          <p>{{ syllabusError }}</p>
+        </div>
+
+        <!-- 🔴 MODIFICAR: Sin temario - agregar condiciones de loading y error -->
         <div
-          *ngIf="!selectedResource.syllabus || selectedResource.syllabus.length === 0"
+          *ngIf="
+            !syllabusLoading &&
+            !syllabusError &&
+            (!selectedResource.syllabus || selectedResource.syllabus.length === 0)
+          "
           class="state-message empty"
         >
           <p>No hay temario asignado a este recurso.</p>
           <button class="btn-add-syllabus">Agregar temario</button>
         </div>
 
-        <!-- Con temario -->
+        <!-- 🔴 MODIFICAR: Con temario - agregar condición de loading -->
         <table
-          *ngIf="selectedResource.syllabus && selectedResource.syllabus.length > 0"
+          *ngIf="
+            !syllabusLoading && selectedResource.syllabus && selectedResource.syllabus.length > 0
+          "
           class="syllabus-table"
         >
           <thead>
@@ -96,7 +112,8 @@
             <tr *ngFor="let item of selectedResource.syllabus">
               <td>{{ item.number }}</td>
               <td>{{ item.name }}</td>
-              <td>{{ item.progress }}</td>
+              <td>{{ item.progress }}%</td>
+              <!-- 🔴 AGREGAR: % al final -->
               <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
             </tr>
           </tbody>

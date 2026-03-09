@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Resource } from '../../../domain/models/resource.model';
 import { GetResourcesUseCase } from '../../../application/use-cases/get-resources.usecase';
+import { GetResourceSyllabusUseCase } from '../../../application/use-cases/get-resource-syllabus.usecase';
 
 type LoadingState = 'loading' | 'success' | 'error';
 
@@ -13,11 +14,14 @@ type LoadingState = 'loading' | 'success' | 'error';
 })
 export class Resources implements OnInit {
   private readonly getResourceUseCase = inject(GetResourcesUseCase);
+  private readonly getSyllabusUseCase = inject(GetResourceSyllabusUseCase);
 
   resources: Resource[] = [];
   selectedResource: Resource | null = null;
   state: LoadingState = 'loading';
   errorMessage = '';
+  syllabusLoading = false;
+  syllabusError = '';
 
   ngOnInit(): void {
     this.loadResources();
@@ -42,50 +46,33 @@ export class Resources implements OnInit {
 
   selectResource(resource: Resource): void {
     this.selectedResource = resource;
+
+    if (!resource.syllabus) {
+      this.loadSyllabus(resource.name);
+    }
+  }
+
+  private loadSyllabus(resourceName: string): void {
+    this.syllabusLoading = true;
+    this.syllabusError = '';
+
+    this.getSyllabusUseCase.execute(resourceName).subscribe({
+      next: (syllabus) => {
+        if (this.selectedResource) {
+          this.selectedResource.syllabus = syllabus;
+        }
+        this.syllabusLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading syllabus:', error);
+        this.syllabusError = 'Error al cargar el temario';
+        this.syllabusLoading = false;
+      },
+    });
   }
 
   retry(): void {
     this.loadResources();
-  }
-
-  private getMockResources(): Resource[] {
-    return [
-      {
-        position: 1,
-        name: 'Effective Java',
-        location: 'Biblioteca personal',
-        progress: 45,
-        activityDate: new Date('2024-01-15'),
-        // syllabus: [
-        //   {
-        //     number: '1',
-        //     name: 'Chapter 1: An introduction to Java',
-        //     progress: '100%',
-        //     activityDate: new Date('2024-01-10'),
-        //   },
-        //   {
-        //     number: '1.1',
-        //     name: 'Basic concepts',
-        //     progress: '100%',
-        //     activityDate: new Date('2024-01-11'),
-        //   },
-        //   {
-        //     number: '1.2',
-        //     name: 'Advanced topics',
-        //     progress: '50%',
-        //     activityDate: new Date('2024-01-15'),
-        //   },
-        //   { number: '2', name: 'Chapter 2: Design Patterns', progress: '0%', activityDate: null },
-        // ],
-      },
-      {
-        position: 2,
-        name: 'Clean Code',
-        location: 'Kindle',
-        progress: 0,
-        activityDate: new Date('2024-01-01'),
-      },
-    ];
   }
 
   private getErrorMessage(error: any): string {
