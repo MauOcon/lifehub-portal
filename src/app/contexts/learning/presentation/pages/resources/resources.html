@@ -85,12 +85,84 @@
           *ngIf="
             !syllabusLoading &&
             !syllabusError &&
+            !isEditingMode &&
             (!selectedResource.syllabus || selectedResource.syllabus.length === 0)
           "
           class="state-message empty"
         >
           <p>No hay temario asignado a este recurso.</p>
-          <button class="btn-add-syllabus">Agregar temario</button>
+          <button class="btn-add-syllabus" (click)="addSyllabus()">Agregar temario</button>
+        </div>
+
+        <!-- Modo edición -->
+        <div *ngIf="isEditingMode" class="syllabus-editor">
+          <div class="editor-actions">
+            <button class="btn-save" (click)="saveSyllabus()" [disabled]="editableTopics.length === 0">Guardar</button>
+            <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+          </div>
+
+          <table class="syllabus-edit-table">
+            <thead>
+              <tr>
+                <th>Símbolo</th>
+                <th>Nombre</th>
+                <th>Padre</th>
+                <th>Avance (%)</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let topic of editableTopics; let i = index">
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="topic.hierarchicalSymbol"
+                    placeholder="I, II, 1, 2..."
+                    class="input-symbol"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="topic.name"
+                    placeholder="Nombre del tema"
+                    class="input-name"
+                  />
+                </td>
+                <td>
+                  <select [(ngModel)]="topic.fatherId" class="select-parent">
+                    <option [value]="0">Raíz</option>
+                    <option *ngFor="let parent of getAvailableParents(topic.topicId)" [value]="parent.topicId">
+                      {{ parent.hierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
+                    </option>
+                  </select>
+                  <span *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)" class="parent-preview">
+                    ({{ getParentSymbol(topic.fatherId) }})
+                  </span>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    [(ngModel)]="topic.completion"
+                    min="0"
+                    max="100"
+                    placeholder="0"
+                    class="input-completion"
+                  />
+                </td>
+                <td>
+                  <button class="btn-remove" (click)="removeTopic(i)">Eliminar</button>
+                </td>
+              </tr>
+              <tr class="add-row">
+                <td colspan="5">
+                  <button class="btn-add-row" (click)="addTopic()">
+                    + Agregar nuevo tema
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <!-- 🔴 MODIFICAR: Con temario - agregar condición de loading -->

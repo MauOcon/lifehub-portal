@@ -4,6 +4,7 @@ import { map, Observable, tap } from 'rxjs';
 import { Resource } from '../../domain/models/resource.model';
 import { ResourceRepository } from '../../domain/repositories/resource.repository';
 import { SyllabusItem } from '../../domain/models/syllabus-item.model';
+import { CreateSyllabusRequest } from '../../domain/models/syllabus-topic.model';
 
 interface SyllabusApiResponse {
   hierarchicalNumber: string;
@@ -48,5 +49,14 @@ export class ResourceApiRepository extends ResourceRepository {
           error: (err) => console.error('✗ Error loading syllabus:', err),
         }),
       );
+  }
+
+  override createSyllabus(request: CreateSyllabusRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/syllabus`, request).pipe(
+      tap({
+        next: () => console.log('✓ Syllabus created'),
+        error: (err) => console.error('✗ Error creating syllabus:', err),
+      })
+    );
   }
 }
