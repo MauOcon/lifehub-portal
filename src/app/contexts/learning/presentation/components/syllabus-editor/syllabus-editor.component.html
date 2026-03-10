@@ -1,0 +1,21 @@
+<div class="syllabus-editor-container">
+  <!-- Modo Vista -->
+  <table *ngIf="isViewMode" class="syllabus-table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Avance</th>
+        <th scope="col">Fecha de actividad</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of syllabus">
+        <td>{{ item.number }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.progress }}%</td>
+        <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
