@@ -6,6 +6,7 @@ import { GetResourcesUseCase } from '../../../application/use-cases/get-resource
 import { GetResourceSyllabusUseCase } from '../../../application/use-cases/get-resource-syllabus.usecase';
 import { CreateResourceSyllabusUseCase } from '../../../application/use-cases/create-resource-syllabus.usecase';
 import { CreateSyllabusRequest, SyllabusTopic } from '../../../domain/models/syllabus-topic.model';
+import { SyllabusEditorComponent } from '../../components/syllabus-editor/syllabus-editor.component';
 
 type LoadingState = 'loading' | 'success' | 'error';
 
@@ -20,7 +21,7 @@ interface EditableTopic {
 
 @Component({
   selector: 'app-resources',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SyllabusEditorComponent],
   templateUrl: './resources.html',
   styleUrl: './resources.scss',
 })
@@ -93,7 +94,7 @@ export class Resources implements OnInit {
 
   addSyllabus(): void {
     if (!this.selectedResource) return;
-    
+
     this.isEditingMode = true;
     this.editableTopics = [];
     this.nextTopicId = 1;
@@ -106,7 +107,7 @@ export class Resources implements OnInit {
       name: '',
       hierarchicalSymbol: '',
       fatherId: 0,
-      completion: 0
+      completion: 0,
     });
   }
 
@@ -122,23 +123,23 @@ export class Resources implements OnInit {
   saveSyllabus(): void {
     if (!this.selectedResource || this.editableTopics.length === 0) return;
 
-    const validTopics = this.editableTopics.filter(t => t.name.trim() !== '');
+    const validTopics = this.editableTopics.filter((t) => t.name.trim() !== '');
     if (validTopics.length === 0) return;
 
     const topicsMap = new Map<number, SyllabusTopic>();
-    
-    validTopics.forEach(topic => {
+
+    validTopics.forEach((topic) => {
       topicsMap.set(topic.topicId, {
         topicId: topic.topicId,
         order: topic.order,
         name: topic.name,
         hierarchicalSymbol: topic.hierarchicalSymbol,
         fatherId: topic.fatherId,
-        subTopics: []
+        subTopics: [],
       });
     });
 
-    validTopics.forEach(topic => {
+    validTopics.forEach((topic) => {
       if (topic.fatherId !== 0) {
         const parent = topicsMap.get(topic.fatherId);
         const child = topicsMap.get(topic.topicId);
@@ -150,7 +151,7 @@ export class Resources implements OnInit {
       }
     });
 
-    const rootTopics = Array.from(topicsMap.values()).filter(t => t.fatherId === 0);
+    const rootTopics = Array.from(topicsMap.values()).filter((t) => t.fatherId === 0);
     if (rootTopics.length === 0) return;
 
     const mainRoot: SyllabusTopic = {
@@ -159,12 +160,12 @@ export class Resources implements OnInit {
       name: this.selectedResource.name,
       hierarchicalSymbol: '',
       fatherId: 0,
-      subTopics: rootTopics
+      subTopics: rootTopics,
     };
 
     const request: CreateSyllabusRequest = {
       resourceName: this.selectedResource.name,
-      syllabus: mainRoot
+      syllabus: mainRoot,
     };
 
     this.syllabusLoading = true;
@@ -181,16 +182,16 @@ export class Resources implements OnInit {
         console.error('Error creating syllabus:', error);
         this.syllabusError = 'Error al crear el temario';
         this.syllabusLoading = false;
-      }
+      },
     });
   }
 
   getAvailableParents(currentTopicId: number): EditableTopic[] {
-    return this.editableTopics.filter(t => t.topicId !== currentTopicId);
+    return this.editableTopics.filter((t) => t.topicId !== currentTopicId);
   }
 
   getParentSymbol(fatherId: number): string {
-    const parent = this.editableTopics.find(t => t.topicId === fatherId);
+    const parent = this.editableTopics.find((t) => t.topicId === fatherId);
     return parent ? parent.hierarchicalSymbol : '';
   }
 

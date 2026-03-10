@@ -97,7 +97,13 @@
         <!-- Modo edición -->
         <div *ngIf="isEditingMode" class="syllabus-editor">
           <div class="editor-actions">
-            <button class="btn-save" (click)="saveSyllabus()" [disabled]="editableTopics.length === 0">Guardar</button>
+            <button
+              class="btn-save"
+              (click)="saveSyllabus()"
+              [disabled]="editableTopics.length === 0"
+            >
+              Guardar
+            </button>
             <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
           </div>
 
@@ -132,11 +138,17 @@
                 <td>
                   <select [(ngModel)]="topic.fatherId" class="select-parent">
                     <option [value]="0">Raíz</option>
-                    <option *ngFor="let parent of getAvailableParents(topic.topicId)" [value]="parent.topicId">
+                    <option
+                      *ngFor="let parent of getAvailableParents(topic.topicId)"
+                      [value]="parent.topicId"
+                    >
                       {{ parent.hierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
                     </option>
                   </select>
-                  <span *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)" class="parent-preview">
+                  <span
+                    *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)"
+                    class="parent-preview"
+                  >
                     ({{ getParentSymbol(topic.fatherId) }})
                   </span>
                 </td>
@@ -156,40 +168,24 @@
               </tr>
               <tr class="add-row">
                 <td colspan="5">
-                  <button class="btn-add-row" (click)="addTopic()">
-                    + Agregar nuevo tema
-                  </button>
+                  <button class="btn-add-row" (click)="addTopic()">+ Agregar nuevo tema</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- 🔴 MODIFICAR: Con temario - agregar condición de loading -->
-        <table
+        <!-- Temario con nuevo componente -->
+        <app-syllabus-editor
           *ngIf="
-            !syllabusLoading && selectedResource.syllabus && selectedResource.syllabus.length > 0
+            !syllabusLoading &&
+            selectedResource.syllabus &&
+            selectedResource.syllabus.length > 0
           "
-          class="syllabus-table"
+          [mode]="'view'"
+          [syllabus]="selectedResource.syllabus"
         >
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Avance</th>
-              <th scope="col">Fecha de actividad</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of selectedResource.syllabus">
-              <td>{{ item.number }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.progress }}%</td>
-              <!-- 🔴 AGREGAR: % al final -->
-              <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
-            </tr>
-          </tbody>
-        </table>
+        </app-syllabus-editor>
       </section>
     </ng-container>
   </section>
