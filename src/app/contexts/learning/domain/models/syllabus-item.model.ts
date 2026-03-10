@@ -1,4 +1,5 @@
 export interface SyllabusItem {
+  topicId: number;
   number: string;
   name: string;
   progress: number;

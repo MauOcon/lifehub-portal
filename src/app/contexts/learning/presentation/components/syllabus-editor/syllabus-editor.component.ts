@@ -28,6 +28,9 @@ export class SyllabusEditorComponent {
   @Output() onCancel = new EventEmitter<void>();
   @Output() onEdit = new EventEmitter<void>();
 
+  editableTopics: EditableTopic[] = [];
+  nextTopicId = 1;
+
   get isViewMode(): boolean {
     return this.mode === 'view';
   }
@@ -38,5 +41,55 @@ export class SyllabusEditorComponent {
 
   get isCreateMode(): boolean {
     return this.mode === 'create';
+  }
+
+  get isEditable(): boolean {
+    return this.isEditMode || this.isCreateMode;
+  }
+
+  addTopic(): void {
+    this.editableTopics.push({
+      topicId: this.nextTopicId++,
+      order: this.editableTopics.length,
+      name: '',
+      hierarchicalSymbol: '',
+      fatherId: 0,
+      completion: 0
+    });
+  }
+
+  removeTopic(index: number): void {
+    this.editableTopics.splice(index, 1);
+  }
+
+  handleKeyDown(event: KeyboardEvent, index: number): void {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault();
+      this.addTopic();
+      setTimeout(() => {
+        const inputs = document.querySelectorAll('.input-symbol');
+        const newInput = inputs[inputs.length - 1] as HTMLInputElement;
+        if (newInput) {
+          newInput.focus();
+        }
+      }, 0);
+    }
+  }
+
+  getAvailableParents(currentTopicId: number): EditableTopic[] {
+    return this.editableTopics.filter(t => t.topicId !== currentTopicId);
+  }
+
+  getParentSymbol(fatherId: number): string {
+    const parent = this.editableTopics.find(t => t.topicId === fatherId);
+    return parent ? parent.hierarchicalSymbol : '';
+  }
+
+  save(): void {
+    this.onSave.emit(this.editableTopics);
+  }
+
+  cancel(): void {
+    this.onCancel.emit();
   }
 }

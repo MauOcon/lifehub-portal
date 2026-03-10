@@ -37,8 +37,6 @@ export class Resources implements OnInit {
   syllabusLoading = false;
   syllabusError = '';
   isEditingMode = false;
-  editableTopics: EditableTopic[] = [];
-  nextTopicId = 1;
 
   ngOnInit(): void {
     this.loadResources();
@@ -94,36 +92,21 @@ export class Resources implements OnInit {
 
   addSyllabus(): void {
     if (!this.selectedResource) return;
-
     this.isEditingMode = true;
-    this.editableTopics = [];
-    this.nextTopicId = 1;
-  }
-
-  addTopic(): void {
-    this.editableTopics.push({
-      topicId: this.nextTopicId++,
-      order: this.editableTopics.length,
-      name: '',
-      hierarchicalSymbol: '',
-      fatherId: 0,
-      completion: 0,
-    });
-  }
-
-  removeTopic(index: number): void {
-    this.editableTopics.splice(index, 1);
   }
 
   cancelEdit(): void {
     this.isEditingMode = false;
-    this.editableTopics = [];
   }
 
-  saveSyllabus(): void {
-    if (!this.selectedResource || this.editableTopics.length === 0) return;
+  handleSyllabusCreate(topics: EditableTopic[]): void {
+    if (!this.selectedResource || topics.length === 0) return;
 
-    const validTopics = this.editableTopics.filter((t) => t.name.trim() !== '');
+    const validTopics = topics.filter((t) => t.name.trim() !== '').map(t => ({
+      ...t,
+      fatherId: typeof t.fatherId === 'string' ? parseInt(t.fatherId, 10) : t.fatherId
+    }));
+    
     if (validTopics.length === 0) return;
 
     const topicsMap = new Map<number, SyllabusTopic>();
@@ -146,7 +129,6 @@ export class Resources implements OnInit {
         if (parent && child) {
           if (!parent.subTopics) parent.subTopics = [];
           parent.subTopics.push(child);
-          topicsMap.delete(topic.topicId);
         }
       }
     });
@@ -175,7 +157,6 @@ export class Resources implements OnInit {
       next: () => {
         console.log('Syllabus created successfully');
         this.isEditingMode = false;
-        this.editableTopics = [];
         this.loadSyllabus(this.selectedResource!.name);
       },
       error: (error) => {
@@ -184,15 +165,6 @@ export class Resources implements OnInit {
         this.syllabusLoading = false;
       },
     });
-  }
-
-  getAvailableParents(currentTopicId: number): EditableTopic[] {
-    return this.editableTopics.filter((t) => t.topicId !== currentTopicId);
-  }
-
-  getParentSymbol(fatherId: number): string {
-    const parent = this.editableTopics.find((t) => t.topicId === fatherId);
-    return parent ? parent.hierarchicalSymbol : '';
   }
 
   private getErrorMessage(error: any): string {

@@ -7,6 +7,7 @@ import { SyllabusItem } from '../../domain/models/syllabus-item.model';
 import { CreateSyllabusRequest } from '../../domain/models/syllabus-topic.model';
 
 interface SyllabusApiResponse {
+  topicId: number;
   hierarchicalNumber: string;
   topicName: string;
   completion: number;
@@ -38,6 +39,7 @@ export class ResourceApiRepository extends ResourceRepository {
       .pipe(
         map((items) =>
           items.map((item) => ({
+            topicId: item.topicId,
             number: item.hierarchicalNumber,
             name: item.topicName,
             progress: item.completion,
