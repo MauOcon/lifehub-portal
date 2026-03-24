@@ -70,22 +70,22 @@
       <section *ngIf="selectedResource" class="syllabus-section">
         <h3 class="syllabus-title">Temario de {{ selectedResource.name }}</h3>
 
-        <!-- 🔴 AGREGAR: Cargando temario -->
+        <!-- Cargando temario -->
         <div *ngIf="syllabusLoading" class="state-message">
           <p>Cargando temario...</p>
         </div>
 
-        <!-- 🔴 AGREGAR: Error al cargar temario -->
+        <!-- Error al cargar temario -->
         <div *ngIf="syllabusError && !syllabusLoading" class="state-message error">
           <p>{{ syllabusError }}</p>
         </div>
 
-        <!-- 🔴 MODIFICAR: Sin temario - agregar condiciones de loading y error -->
+        <!-- Sin temario -->
         <div
           *ngIf="
             !syllabusLoading &&
             !syllabusError &&
-            !isEditingMode &&
+            syllabusMode === 'view' &&
             (!selectedResource.syllabus || selectedResource.syllabus.length === 0)
           "
           class="state-message empty"
@@ -94,25 +94,29 @@
           <button class="btn-add-syllabus" (click)="addSyllabus()">Agregar temario</button>
         </div>
 
-        <!-- Modo creación con componente -->
+        <!-- Modo creación -->
         <app-syllabus-editor
-          *ngIf="isEditingMode"
+          *ngIf="syllabusMode === 'create'"
           [mode]="'create'"
           [syllabus]="[]"
-          (onSave)="handleSyllabusCreate($event)"
-          (onCancel)="cancelEdit()">
+          (onSave)="handleSyllabusSave($event)"
+          (onCancel)="cancelSyllabusEdit()">
         </app-syllabus-editor>
 
-        <!-- Temario con nuevo componente -->
+        <!-- Temario: vista o edición -->
         <app-syllabus-editor
           *ngIf="
             !syllabusLoading &&
+            syllabusMode !== 'create' &&
             selectedResource.syllabus &&
             selectedResource.syllabus.length > 0
           "
-          [mode]="'view'"
+          [mode]="syllabusMode"
           [syllabus]="selectedResource.syllabus"
-        >
+          [showEditButton]="syllabusMode === 'view'"
+          (onEdit)="editSyllabus()"
+          (onSave)="handleSyllabusSave($event)"
+          (onCancel)="cancelSyllabusEdit()">
         </app-syllabus-editor>
       </section>
     </ng-container>

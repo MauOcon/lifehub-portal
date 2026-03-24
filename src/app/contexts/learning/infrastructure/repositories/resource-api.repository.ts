@@ -4,7 +4,7 @@ import { map, Observable, tap } from 'rxjs';
 import { Resource } from '../../domain/models/resource.model';
 import { ResourceRepository } from '../../domain/repositories/resource.repository';
 import { SyllabusItem } from '../../domain/models/syllabus-item.model';
-import { CreateSyllabusRequest } from '../../domain/models/syllabus-topic.model';
+import { CreateSyllabusRequest, UpdateSyllabusTopicRequest } from '../../domain/models/syllabus-topic.model';
 
 interface SyllabusApiResponse {
   topicId: number;
@@ -12,6 +12,7 @@ interface SyllabusApiResponse {
   topicName: string;
   completion: number;
   lastActivityDate: string | null;
+  fatherId: number;
 }
 
 @Injectable({
@@ -44,6 +45,7 @@ export class ResourceApiRepository extends ResourceRepository {
             name: item.topicName,
             progress: item.completion,
             activityDate: item.lastActivityDate ? new Date(item.lastActivityDate) : null,
+            fatherId: item.fatherId,
           })),
         ),
         tap({
@@ -58,6 +60,15 @@ export class ResourceApiRepository extends ResourceRepository {
       tap({
         next: () => console.log('✓ Syllabus created'),
         error: (err) => console.error('✗ Error creating syllabus:', err),
+      })
+    );
+  }
+
+  override updateSyllabusTopics(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${resourceId}/syllabus/topics`, topics).pipe(
+      tap({
+        next: () => console.log('✓ Syllabus topics updated'),
+        error: (err) => console.error('✗ Error updating syllabus topics:', err),
       })
     );
   }

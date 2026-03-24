@@ -4,4 +4,5 @@ export interface SyllabusItem {
   name: string;
   progress: number;
   activityDate: Date | null;
+  fatherId: number;
 }

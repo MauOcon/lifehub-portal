@@ -1,28 +1,34 @@
 <div class="syllabus-editor-container">
   <!-- Modo Vista -->
-  <table *ngIf="isViewMode" class="syllabus-table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Nombre</th>
-        <th scope="col">Avance</th>
-        <th scope="col">Fecha de actividad</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of syllabus">
-        <td>{{ item.number }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.progress }}%</td>
-        <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngIf="isViewMode">
+    <div *ngIf="showEditButton" class="editor-actions">
+      <button class="btn-edit" (click)="edit()">Editar temario</button>
+    </div>
+
+    <table class="syllabus-table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Avance</th>
+          <th scope="col">Fecha de actividad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of syllabus">
+          <td>{{ item.number }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.progress }}%</td>
+          <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- Modo Creación/Edición -->
   <div *ngIf="isEditable" class="syllabus-editor">
     <div class="editor-actions">
-      <button class="btn-save" (click)="save()" [disabled]="editableTopics.length === 0">Guardar</button>
+      <button class="btn-save" (click)="save()" [disabled]="isCreateMode ? editableTopics.length === 0 : !hasChanges">Guardar</button>
       <button class="btn-cancel" (click)="cancel()">Cancelar</button>
       <span class="keyboard-hint">Ctrl+Enter para agregar tema</span>
     </div>
@@ -34,6 +40,7 @@
           <th>Nombre</th>
           <th>Padre</th>
           <th>Avance (%)</th>
+          <th *ngIf="isEditMode">Fecha de actividad</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -45,6 +52,8 @@
               [(ngModel)]="topic.hierarchicalSymbol"
               placeholder="I, II, 1, 2..."
               class="input-symbol"
+              [class.modified]="isModified(topic.topicId, 'hierarchicalSymbol')"
+              (ngModelChange)="onFieldChange(topic.topicId, 'hierarchicalSymbol')"
               (keydown)="handleKeyDown($event, i)"
             />
           </td>
@@ -54,19 +63,23 @@
               [(ngModel)]="topic.name"
               placeholder="Nombre del tema"
               class="input-name"
+              [class.modified]="isModified(topic.topicId, 'name')"
+              (ngModelChange)="onFieldChange(topic.topicId, 'name')"
               (keydown)="handleKeyDown($event, i)"
             />
           </td>
           <td>
-            <select [(ngModel)]="topic.fatherId" class="select-parent" (keydown)="handleKeyDown($event, i)">
-              <option [value]="0">Raíz</option>
-              <option *ngFor="let parent of getAvailableParents(topic.topicId)" [value]="parent.topicId">
-                {{ parent.hierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
-              </option>
-            </select>
-            <span *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)" class="parent-preview">
-              ({{ getParentSymbol(topic.fatherId) }})
-            </span>
+            <div class="parent-cell">
+              <select [(ngModel)]="topic.fatherId" class="select-parent" (keydown)="handleKeyDown($event, i)">
+                <option [value]="0">Raíz</option>
+                <option *ngFor="let parent of getAvailableParents(topic.topicId)" [value]="parent.topicId">
+                  {{ parent.hierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
+                </option>
+              </select>
+              <span *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)" class="parent-preview">
+                ({{ getParentSymbol(topic.fatherId) }})
+              </span>
+            </div>
           </td>
           <td>
             <input
@@ -76,15 +89,20 @@
               max="100"
               placeholder="0"
               class="input-completion"
+              [class.modified]="isModified(topic.topicId, 'completion')"
+              (ngModelChange)="onFieldChange(topic.topicId, 'completion')"
               (keydown)="handleKeyDown($event, i)"
             />
+          </td>
+          <td *ngIf="isEditMode" class="date-cell">
+            {{ syllabus[i]?.activityDate ? (syllabus[i].activityDate | date: 'dd/MM/yyyy') : '-' }}
           </td>
           <td>
             <button class="btn-remove" (click)="removeTopic(i)">Eliminar</button>
           </td>
         </tr>
         <tr class="add-row">
-          <td colspan="5">
+          <td [attr.colspan]="isEditMode ? 6 : 5">
             <button class="btn-add-row" (click)="addTopic()">
               + Agregar nuevo tema
             </button>

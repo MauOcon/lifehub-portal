@@ -5,19 +5,12 @@ import { Resource } from '../../../domain/models/resource.model';
 import { GetResourcesUseCase } from '../../../application/use-cases/get-resources.usecase';
 import { GetResourceSyllabusUseCase } from '../../../application/use-cases/get-resource-syllabus.usecase';
 import { CreateResourceSyllabusUseCase } from '../../../application/use-cases/create-resource-syllabus.usecase';
-import { CreateSyllabusRequest, SyllabusTopic } from '../../../domain/models/syllabus-topic.model';
-import { SyllabusEditorComponent } from '../../components/syllabus-editor/syllabus-editor.component';
+import { UpdateResourceSyllabusUseCase } from '../../../application/use-cases/update-resource-syllabus.usecase';
+import { CreateSyllabusRequest, SyllabusTopic, UpdateSyllabusTopicRequest } from '../../../domain/models/syllabus-topic.model';
+import { EditableTopic, SyllabusEditorComponent } from '../../components/syllabus-editor/syllabus-editor.component';
 
 type LoadingState = 'loading' | 'success' | 'error';
-
-interface EditableTopic {
-  topicId: number;
-  order: number;
-  name: string;
-  hierarchicalSymbol: string;
-  fatherId: number;
-  completion: number;
-}
+type SyllabusMode = 'view' | 'edit' | 'create';
 
 @Component({
   selector: 'app-resources',
@@ -29,6 +22,7 @@ export class Resources implements OnInit {
   private readonly getResourceUseCase = inject(GetResourcesUseCase);
   private readonly getSyllabusUseCase = inject(GetResourceSyllabusUseCase);
   private readonly createSyllabusUseCase = inject(CreateResourceSyllabusUseCase);
+  private readonly updateSyllabusUseCase = inject(UpdateResourceSyllabusUseCase);
 
   resources: Resource[] = [];
   selectedResource: Resource | null = null;
@@ -36,7 +30,7 @@ export class Resources implements OnInit {
   errorMessage = '';
   syllabusLoading = false;
   syllabusError = '';
-  isEditingMode = false;
+  syllabusMode: SyllabusMode = 'view';
 
   ngOnInit(): void {
     this.loadResources();
@@ -92,14 +86,26 @@ export class Resources implements OnInit {
 
   addSyllabus(): void {
     if (!this.selectedResource) return;
-    this.isEditingMode = true;
+    this.syllabusMode = 'create';
   }
 
-  cancelEdit(): void {
-    this.isEditingMode = false;
+  editSyllabus(): void {
+    this.syllabusMode = 'edit';
   }
 
-  handleSyllabusCreate(topics: EditableTopic[]): void {
+  cancelSyllabusEdit(): void {
+    this.syllabusMode = 'view';
+  }
+
+  handleSyllabusSave(topics: EditableTopic[]): void {
+    if (this.syllabusMode === 'create') {
+      this.handleSyllabusCreate(topics);
+    } else if (this.syllabusMode === 'edit') {
+      this.handleSyllabusUpdate(topics);
+    }
+  }
+
+  private handleSyllabusCreate(topics: EditableTopic[]): void {
     if (!this.selectedResource || topics.length === 0) return;
 
     const validTopics = topics.filter((t) => t.name.trim() !== '').map(t => ({
@@ -156,12 +162,41 @@ export class Resources implements OnInit {
     this.createSyllabusUseCase.execute(request).subscribe({
       next: () => {
         console.log('Syllabus created successfully');
-        this.isEditingMode = false;
+        this.syllabusMode = 'view';
         this.loadSyllabus(this.selectedResource!.name);
       },
       error: (error) => {
         console.error('Error creating syllabus:', error);
         this.syllabusError = 'Error al crear el temario';
+        this.syllabusLoading = false;
+      },
+    });
+  }
+
+  private handleSyllabusUpdate(topics: EditableTopic[]): void {
+    if (!this.selectedResource) return;
+
+    const updateRequests: UpdateSyllabusTopicRequest[] = topics.map(t => ({
+      topicId: t.topicId,
+      topicName: t.name,
+      hierarchicalNumber: t.hierarchicalSymbol,
+      fatherShareValue: 0,
+      progressValue: t.completion,
+      isAutoCalculated: false,
+    }));
+
+    this.syllabusLoading = true;
+    this.syllabusError = '';
+
+    this.updateSyllabusUseCase.execute(this.selectedResource.resourceId, updateRequests).subscribe({
+      next: () => {
+        console.log('Syllabus updated successfully');
+        this.syllabusMode = 'view';
+        this.loadSyllabus(this.selectedResource!.name);
+      },
+      error: (error) => {
+        console.error('Error updating syllabus:', error);
+        this.syllabusError = 'Error al actualizar el temario';
         this.syllabusLoading = false;
       },
     });
