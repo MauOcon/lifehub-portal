@@ -7,7 +7,7 @@ export interface EditableTopic {
   topicId: number;
   order: number;
   name: string;
-  hierarchicalSymbol: string;
+  topicHierarchicalSymbol: string;
   fatherId: number;
   fatherShareValue: number | null;
   completion: number | null;
@@ -65,7 +65,7 @@ export class SyllabusEditorComponent implements OnChanges {
       topicId: item.topicId ?? index + 1,
       order: index,
       name: item.name ?? '',
-      hierarchicalSymbol: item.number ?? '',
+      topicHierarchicalSymbol: item.number ?? '',
       fatherId: item.fatherId,
       fatherShareValue: item.fatherShareValue,
       completion: item.progress,
@@ -108,7 +108,7 @@ export class SyllabusEditorComponent implements OnChanges {
       topicId: this.nextTopicId++,
       order: this.editableTopics.length,
       name: '',
-      hierarchicalSymbol: '',
+      topicHierarchicalSymbol: '',
       fatherId: 0,
       fatherShareValue: null,
       completion: 0,
@@ -139,14 +139,14 @@ export class SyllabusEditorComponent implements OnChanges {
 
   getParentSymbol(fatherId: number): string {
     const parent = this.editableTopics.find((t) => t.topicId === fatherId);
-    return parent?.hierarchicalSymbol ?? '';
+    return parent?.topicHierarchicalSymbol ?? '';
   }
 
   save(): void {
     if (this.isEditMode) {
       const result = this.editableTopics
         .filter((t) =>
-          ['name', 'hierarchicalSymbol', 'fatherShareValue', 'completion'].some((f) =>
+          ['name', 'topicHierarchicalSymbol', 'fatherShareValue', 'completion'].some((f) =>
             this.modifiedFields.has(`${t.topicId}-${f}`),
           ),
         )
@@ -154,8 +154,8 @@ export class SyllabusEditorComponent implements OnChanges {
           topicId: t.topicId,
           order: t.order,
           name: this.modifiedFields.has(`${t.topicId}-name`) ? t.name : null,
-          hierarchicalSymbol: this.modifiedFields.has(`${t.topicId}-hierarchicalSymbol`)
-            ? t.hierarchicalSymbol
+          topicHierarchicalSymbol: this.modifiedFields.has(`${t.topicId}-hierarchicalSymbol`)
+            ? t.topicHierarchicalSymbol
             : null,
           fatherId: t.fatherId,
           fatherShareValue: this.modifiedFields.has(`${t.topicId}-fatherShareValue`)

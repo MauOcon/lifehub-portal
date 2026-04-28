@@ -6,9 +6,16 @@ import { GetResourcesUseCase } from '../../../application/use-cases/get-resource
 import { GetResourceSyllabusUseCase } from '../../../application/use-cases/get-resource-syllabus.usecase';
 import { CreateResourceSyllabusUseCase } from '../../../application/use-cases/create-resource-syllabus.usecase';
 import { UpdateResourceSyllabusUseCase } from '../../../application/use-cases/update-resource-syllabus.usecase';
-import { CreateSyllabusRequest, SyllabusTopic, UpdateSyllabusTopicRequest } from '../../../domain/models/syllabus-topic.model';
+import {
+  CreateSyllabusRequest,
+  SyllabusTopic,
+  UpdateSyllabusTopicRequest,
+} from '../../../domain/models/syllabus-topic.model';
 import { SyllabusItem } from '../../../domain/models/syllabus-item.model';
-import { EditableTopic, SyllabusEditorComponent } from '../../components/syllabus-editor/syllabus-editor.component';
+import {
+  EditableTopic,
+  SyllabusEditorComponent,
+} from '../../components/syllabus-editor/syllabus-editor.component';
 
 type LoadingState = 'loading' | 'success' | 'error';
 type SyllabusMode = 'view' | 'edit' | 'create';
@@ -109,11 +116,13 @@ export class Resources implements OnInit {
   private handleSyllabusCreate(topics: EditableTopic[]): void {
     if (!this.selectedResource || topics.length === 0) return;
 
-    const validTopics = topics.filter((t) => t.name.trim() !== '').map(t => ({
-      ...t,
-      fatherId: typeof t.fatherId === 'string' ? parseInt(t.fatherId, 10) : t.fatherId
-    }));
-    
+    const validTopics = topics
+      .filter((t) => t.name.trim() !== '')
+      .map((t) => ({
+        ...t,
+        fatherId: typeof t.fatherId === 'string' ? parseInt(t.fatherId, 10) : t.fatherId,
+      }));
+
     if (validTopics.length === 0) return;
 
     const topicsMap = new Map<number, SyllabusTopic>();
@@ -123,7 +132,7 @@ export class Resources implements OnInit {
         topicId: topic.topicId,
         order: topic.order,
         name: topic.name,
-        hierarchicalSymbol: topic.hierarchicalSymbol,
+        hierarchicalSymbol: topic.topicHierarchicalSymbol,
         fatherId: topic.fatherId,
         subTopics: [],
       });
@@ -177,10 +186,10 @@ export class Resources implements OnInit {
   private handleSyllabusUpdate(topics: EditableTopic[]): void {
     if (!this.selectedResource) return;
 
-    const updateRequests: UpdateSyllabusTopicRequest[] = topics.map(t => ({
+    const updateRequests: UpdateSyllabusTopicRequest[] = topics.map((t) => ({
       topicId: t.topicId,
       topicName: t.name,
-      hierarchicalNumber: t.hierarchicalSymbol,
+      hierarchicalNumber: t.topicHierarchicalSymbol,
       fatherShareValue: t.fatherShareValue,
       progressValue: t.completion,
       isAutoCalculated: false,
@@ -206,9 +215,9 @@ export class Resources implements OnInit {
   private applyPartialUpdate(response: UpdateSyllabusTopicRequest[]): void {
     if (!this.selectedResource?.syllabus) return;
 
-    const updateMap = new Map(response.map(r => [r.topicId, r]));
+    const updateMap = new Map(response.map((r) => [r.topicId, r]));
 
-    this.selectedResource.syllabus = this.selectedResource.syllabus.map(item => {
+    this.selectedResource.syllabus = this.selectedResource.syllabus.map((item) => {
       const update = updateMap.get(item.topicId);
       if (!update) return item;
 

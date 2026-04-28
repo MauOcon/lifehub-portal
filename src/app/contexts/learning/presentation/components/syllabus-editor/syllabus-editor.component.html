@@ -56,7 +56,7 @@
           <td>
             <input
               type="text"
-              [(ngModel)]="topic.hierarchicalSymbol"
+              [(ngModel)]="topic.topicHierarchicalSymbol"
               placeholder="I, II, 1, 2..."
               class="input-symbol"
               [class.modified]="isModified(topic.topicId, 'hierarchicalSymbol')"
@@ -89,7 +89,7 @@
                   *ngFor="let parent of getAvailableParents(topic.topicId)"
                   [ngValue]="parent.topicId"
                 >
-                  {{ parent.hierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
+                  {{ parent.topicHierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
                 </option>
               </select>
               <span
