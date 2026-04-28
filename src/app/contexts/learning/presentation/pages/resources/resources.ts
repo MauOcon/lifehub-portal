@@ -7,6 +7,7 @@ import { GetResourceSyllabusUseCase } from '../../../application/use-cases/get-r
 import { CreateResourceSyllabusUseCase } from '../../../application/use-cases/create-resource-syllabus.usecase';
 import { UpdateResourceSyllabusUseCase } from '../../../application/use-cases/update-resource-syllabus.usecase';
 import { CreateSyllabusRequest, SyllabusTopic, UpdateSyllabusTopicRequest } from '../../../domain/models/syllabus-topic.model';
+import { SyllabusItem } from '../../../domain/models/syllabus-item.model';
 import { EditableTopic, SyllabusEditorComponent } from '../../components/syllabus-editor/syllabus-editor.component';
 
 type LoadingState = 'loading' | 'success' | 'error';
@@ -180,7 +181,7 @@ export class Resources implements OnInit {
       topicId: t.topicId,
       topicName: t.name,
       hierarchicalNumber: t.hierarchicalSymbol,
-      fatherShareValue: 0,
+      fatherShareValue: t.fatherShareValue,
       progressValue: t.completion,
       isAutoCalculated: false,
     }));
@@ -189,16 +190,34 @@ export class Resources implements OnInit {
     this.syllabusError = '';
 
     this.updateSyllabusUseCase.execute(this.selectedResource.resourceId, updateRequests).subscribe({
-      next: () => {
-        console.log('Syllabus updated successfully');
+      next: (response) => {
+        this.applyPartialUpdate(response);
         this.syllabusMode = 'view';
-        this.loadSyllabus(this.selectedResource!.name);
+        this.syllabusLoading = false;
       },
       error: (error) => {
         console.error('Error updating syllabus:', error);
         this.syllabusError = 'Error al actualizar el temario';
         this.syllabusLoading = false;
       },
+    });
+  }
+
+  private applyPartialUpdate(response: UpdateSyllabusTopicRequest[]): void {
+    if (!this.selectedResource?.syllabus) return;
+
+    const updateMap = new Map(response.map(r => [r.topicId, r]));
+
+    this.selectedResource.syllabus = this.selectedResource.syllabus.map(item => {
+      const update = updateMap.get(item.topicId);
+      if (!update) return item;
+
+      return {
+        ...item,
+        ...(update.topicName != null && { name: update.topicName }),
+        ...(update.hierarchicalNumber != null && { number: update.hierarchicalNumber }),
+        ...(update.progressValue != null && { progress: update.progressValue }),
+      };
     });
   }
 

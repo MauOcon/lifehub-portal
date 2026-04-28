@@ -68,7 +68,7 @@
 
       <!-- Temario del recurso seleccionado -->
       <section *ngIf="selectedResource" class="syllabus-section">
-        <h3 class="syllabus-title">Temario de {{ selectedResource.name }}</h3>
+        <h3 class="syllabus-title">Temario de: {{ selectedResource.name }}</h3>
 
         <!-- Cargando temario -->
         <div *ngIf="syllabusLoading" class="state-message">
@@ -100,7 +100,8 @@
           [mode]="'create'"
           [syllabus]="[]"
           (onSave)="handleSyllabusSave($event)"
-          (onCancel)="cancelSyllabusEdit()">
+          (onCancel)="cancelSyllabusEdit()"
+        >
         </app-syllabus-editor>
 
         <!-- Temario: vista o edición -->
@@ -116,7 +117,8 @@
           [showEditButton]="syllabusMode === 'view'"
           (onEdit)="editSyllabus()"
           (onSave)="handleSyllabusSave($event)"
-          (onCancel)="cancelSyllabusEdit()">
+          (onCancel)="cancelSyllabusEdit()"
+        >
         </app-syllabus-editor>
       </section>
     </ng-container>

@@ -9,7 +9,7 @@ import { ResourceRepository } from '../../domain/repositories/resource.repositor
 export class UpdateResourceSyllabusUseCase {
   private readonly resourceRepository = inject(ResourceRepository);
 
-  execute(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<void> {
+  execute(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<UpdateSyllabusTopicRequest[]> {
     return this.resourceRepository.updateSyllabusTopics(resourceId, topics);
   }
 }

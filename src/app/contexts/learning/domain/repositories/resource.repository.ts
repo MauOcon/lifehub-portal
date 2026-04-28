@@ -7,5 +7,5 @@ export abstract class ResourceRepository {
   abstract getAll(): Observable<Resource[]>;
   abstract getSyllabus(resourceName: string): Observable<SyllabusItem[]>;
   abstract createSyllabus(request: CreateSyllabusRequest): Observable<void>;
-  abstract updateSyllabusTopics(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<void>;
+  abstract updateSyllabusTopics(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<UpdateSyllabusTopicRequest[]>;
 }

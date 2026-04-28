@@ -14,9 +14,9 @@ export interface CreateSyllabusRequest {
 
 export interface UpdateSyllabusTopicRequest {
   topicId: number;
-  topicName: string;
-  hierarchicalNumber: string;
-  fatherShareValue: number;
-  progressValue: number;
+  topicName: string | null;
+  hierarchicalNumber: string | null;
+  fatherShareValue: number | null;
+  progressValue: number | null;
   isAutoCalculated: boolean;
 }

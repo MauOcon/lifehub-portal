@@ -9,7 +9,8 @@ export interface EditableTopic {
   name: string;
   hierarchicalSymbol: string;
   fatherId: number;
-  completion: number;
+  fatherShareValue: number | null;
+  completion: number | null;
 }
 
 @Component({
@@ -17,7 +18,7 @@ export interface EditableTopic {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './syllabus-editor.component.html',
-  styleUrl: './syllabus-editor.component.scss'
+  styleUrl: './syllabus-editor.component.scss',
 })
 export class SyllabusEditorComponent implements OnChanges {
   @Input() mode: 'view' | 'edit' | 'create' = 'view';
@@ -63,27 +64,31 @@ export class SyllabusEditorComponent implements OnChanges {
     this.editableTopics = this.syllabus.map((item, index) => ({
       topicId: item.topicId ?? index + 1,
       order: index,
-      name: item.name,
-      hierarchicalSymbol: item.number,
+      name: item.name ?? '',
+      hierarchicalSymbol: item.number ?? '',
       fatherId: item.fatherId,
-      completion: item.progress
+      fatherShareValue: item.fatherShareValue,
+      completion: item.progress,
     }));
-    this.originalTopics = this.editableTopics.map(t => ({ ...t }));
+    this.originalTopics = this.editableTopics.map((t) => ({ ...t }));
     this.nextTopicId = this.editableTopics.length + 1;
     this.modifiedFields.clear();
   }
 
   onFieldChange(topicId: number, field: string): void {
     const key = `${topicId}-${field}`;
-    const current = this.editableTopics.find(t => t.topicId === topicId);
-    const original = this.originalTopics.find(t => t.topicId === topicId);
+    const current = this.editableTopics.find((t) => t.topicId === topicId);
+    const original = this.originalTopics.find((t) => t.topicId === topicId);
 
     if (!original) {
       this.modifiedFields.add(key);
       return;
     }
 
-    if (current && original[field as keyof EditableTopic] !== current[field as keyof EditableTopic]) {
+    if (
+      current &&
+      original[field as keyof EditableTopic] !== current[field as keyof EditableTopic]
+    ) {
       this.modifiedFields.add(key);
     } else {
       this.modifiedFields.delete(key);
@@ -105,7 +110,8 @@ export class SyllabusEditorComponent implements OnChanges {
       name: '',
       hierarchicalSymbol: '',
       fatherId: 0,
-      completion: 0
+      fatherShareValue: null,
+      completion: 0,
     });
   }
 
@@ -128,22 +134,37 @@ export class SyllabusEditorComponent implements OnChanges {
   }
 
   getAvailableParents(currentTopicId: number): EditableTopic[] {
-    return this.editableTopics.filter(t => t.topicId !== currentTopicId);
+    return this.editableTopics.filter((t) => t.topicId !== currentTopicId);
   }
 
   getParentSymbol(fatherId: number): string {
-    const parent = this.editableTopics.find(t => t.topicId === fatherId);
-    return parent ? parent.hierarchicalSymbol : '';
+    const parent = this.editableTopics.find((t) => t.topicId === fatherId);
+    return parent?.hierarchicalSymbol ?? '';
   }
 
   save(): void {
     if (this.isEditMode) {
-      const modified = this.editableTopics.filter(t =>
-        this.modifiedFields.has(`${t.topicId}-name`) ||
-        this.modifiedFields.has(`${t.topicId}-hierarchicalSymbol`) ||
-        this.modifiedFields.has(`${t.topicId}-completion`)
-      );
-      this.onSave.emit(modified);
+      const result = this.editableTopics
+        .filter((t) =>
+          ['name', 'hierarchicalSymbol', 'fatherShareValue', 'completion'].some((f) =>
+            this.modifiedFields.has(`${t.topicId}-${f}`),
+          ),
+        )
+        .map((t) => ({
+          topicId: t.topicId,
+          order: t.order,
+          name: this.modifiedFields.has(`${t.topicId}-name`) ? t.name : null,
+          hierarchicalSymbol: this.modifiedFields.has(`${t.topicId}-hierarchicalSymbol`)
+            ? t.hierarchicalSymbol
+            : null,
+          fatherId: t.fatherId,
+          fatherShareValue: this.modifiedFields.has(`${t.topicId}-fatherShareValue`)
+            ? t.fatherShareValue
+            : null,
+          completion: this.modifiedFields.has(`${t.topicId}-completion`) ? t.completion : null,
+        })) as EditableTopic[];
+
+      this.onSave.emit(result);
     } else {
       this.onSave.emit(this.editableTopics);
     }

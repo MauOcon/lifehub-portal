@@ -28,7 +28,13 @@
   <!-- Modo Creación/Edición -->
   <div *ngIf="isEditable" class="syllabus-editor">
     <div class="editor-actions">
-      <button class="btn-save" (click)="save()" [disabled]="isCreateMode ? editableTopics.length === 0 : !hasChanges">Guardar</button>
+      <button
+        class="btn-save"
+        (click)="save()"
+        [disabled]="isCreateMode ? editableTopics.length === 0 : !hasChanges"
+      >
+        Guardar
+      </button>
       <button class="btn-cancel" (click)="cancel()">Cancelar</button>
       <span class="keyboard-hint">Ctrl+Enter para agregar tema</span>
     </div>
@@ -39,6 +45,7 @@
           <th>Símbolo</th>
           <th>Nombre</th>
           <th>Padre</th>
+          <th>Peso</th>
           <th>Avance (%)</th>
           <th *ngIf="isEditMode">Fecha de actividad</th>
           <th>Acciones</th>
@@ -70,16 +77,40 @@
           </td>
           <td>
             <div class="parent-cell">
-              <select [(ngModel)]="topic.fatherId" class="select-parent" (keydown)="handleKeyDown($event, i)">
-                <option [value]="0">Raíz</option>
-                <option *ngFor="let parent of getAvailableParents(topic.topicId)" [value]="parent.topicId">
+              <label for="parent-select">Etiqueta</label>
+              <select
+                id="parent-select"
+                [(ngModel)]="topic.fatherId"
+                class="select-parent"
+                (keydown)="handleKeyDown($event, i)"
+              >
+                <option [ngValue]="0">Raíz</option>
+                <option
+                  *ngFor="let parent of getAvailableParents(topic.topicId)"
+                  [ngValue]="parent.topicId"
+                >
                   {{ parent.hierarchicalSymbol || 'Sin símbolo' }} - {{ parent.name }}
                 </option>
               </select>
-              <span *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)" class="parent-preview">
+              <span
+                *ngIf="topic.fatherId !== 0 && getParentSymbol(topic.fatherId)"
+                class="parent-preview"
+              >
                 ({{ getParentSymbol(topic.fatherId) }})
               </span>
             </div>
+          </td>
+          <td>
+            <input
+              type="number"
+              [(ngModel)]="topic.fatherShareValue"
+              min="0"
+              placeholder="-"
+              class="input-weight"
+              [class.modified]="isModified(topic.topicId, 'fatherShareValue')"
+              (ngModelChange)="onFieldChange(topic.topicId, 'fatherShareValue')"
+              (keydown)="handleKeyDown($event, i)"
+            />
           </td>
           <td>
             <input
@@ -102,10 +133,8 @@
           </td>
         </tr>
         <tr class="add-row">
-          <td [attr.colspan]="isEditMode ? 6 : 5">
-            <button class="btn-add-row" (click)="addTopic()">
-              + Agregar nuevo tema
-            </button>
+          <td [attr.colspan]="isEditMode ? 7 : 6">
+            <button class="btn-add-row" (click)="addTopic()">+ Agregar nuevo tema</button>
           </td>
         </tr>
       </tbody>

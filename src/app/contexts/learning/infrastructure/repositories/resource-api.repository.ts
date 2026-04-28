@@ -13,6 +13,7 @@ interface SyllabusApiResponse {
   completion: number;
   lastActivityDate: string | null;
   fatherId: number;
+  fatherShareValue: number | null;
 }
 
 @Injectable({
@@ -46,6 +47,7 @@ export class ResourceApiRepository extends ResourceRepository {
             progress: item.completion,
             activityDate: item.lastActivityDate ? new Date(item.lastActivityDate) : null,
             fatherId: item.fatherId,
+            fatherShareValue: item.fatherShareValue ?? null,
           })),
         ),
         tap({
@@ -64,8 +66,8 @@ export class ResourceApiRepository extends ResourceRepository {
     );
   }
 
-  override updateSyllabusTopics(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/${resourceId}/syllabus/topics`, topics).pipe(
+  override updateSyllabusTopics(resourceId: number, topics: UpdateSyllabusTopicRequest[]): Observable<UpdateSyllabusTopicRequest[]> {
+    return this.http.patch<UpdateSyllabusTopicRequest[]>(`${this.apiUrl}/${resourceId}/syllabus/topics`, topics).pipe(
       tap({
         next: () => console.log('✓ Syllabus topics updated'),
         error: (err) => console.error('✗ Error updating syllabus topics:', err),
