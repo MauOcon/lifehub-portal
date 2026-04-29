@@ -35,5 +35,18 @@
         {{ goal.learningPathCoverage.coveredTopics }} de {{ goal.learningPathCoverage.totalTopics }} temas completos
       </span>
     </div>
+
+    <!-- Ruta de Aprendizaje -->
+    <div *ngIf="learningPathLoading" class="state-message">
+      <p>Cargando ruta de aprendizaje...</p>
+    </div>
+
+    <app-learning-path-editor
+      *ngIf="!learningPathLoading"
+      [items]="learningPath"
+      [goalId]="goalId"
+      (onSave)="handleLearningPathSave($event)"
+      (onTopicRelationEdit)="handleTopicRelationEdit($event)"
+    ></app-learning-path-editor>
   </ng-container>
 </article>

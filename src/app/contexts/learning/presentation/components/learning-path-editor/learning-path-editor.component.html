@@ -1,0 +1,60 @@
+<div class="learning-path-container">
+  <div class="learning-path-header">
+    <h3 class="learning-path-title">Ruta de Aprendizaje</h3>
+    <div class="header-actions">
+      <button *ngIf="!editing" class="btn-edit" (click)="startEdit()">Editar</button>
+      <ng-container *ngIf="editing">
+        <button class="btn-save" (click)="save()">Guardar</button>
+        <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Modo Vista -->
+  <div *ngIf="!editing" class="learning-path-view">
+    <div *ngIf="items.length === 0" class="state-message empty">
+      <p>No hay temas en la ruta de aprendizaje.</p>
+    </div>
+
+    <div *ngIf="items.length > 0" class="topic-list">
+      <div
+        *ngFor="let item of sortedItems"
+        class="topic-row"
+        [style.padding-left.rem]="getDepth(item) * 1.5"
+      >
+        <span class="topic-symbol">{{ item.hierarchicalSymbol }}</span>
+        <span class="topic-name">{{ item.name }}</span>
+        <span class="topic-coverage" [ngClass]="getCoverageClass(item.coveragePercentage)">
+          {{ getCoverageIcon(item.coveragePercentage) }} {{ item.coveragePercentage }}%
+        </span>
+        <button class="btn-relation" (click)="openRelation(item)" title="Editar relaciones">🔗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modo Edición -->
+  <div *ngIf="editing" class="learning-path-edit">
+    <div *ngFor="let item of sortedItems" class="edit-row" [style.padding-left.rem]="getDepth(item) * 1.5">
+      <input
+        type="text"
+        [(ngModel)]="item.hierarchicalSymbol"
+        placeholder="Símbolo"
+        class="input-symbol"
+      />
+      <input
+        type="text"
+        [(ngModel)]="item.name"
+        placeholder="Nombre del tema"
+        class="input-name"
+      />
+      <div class="edit-actions">
+        <button class="btn-icon" (click)="moveUp(item)" title="Subir">↑</button>
+        <button class="btn-icon" (click)="moveDown(item)" title="Bajar">↓</button>
+        <button *ngIf="!hasChildren(item) || true" class="btn-icon" (click)="addChildTopic(item)" title="Agregar hijo">+ Hijo</button>
+        <button class="btn-icon btn-remove" (click)="removeTopic(item)" title="Eliminar">🗑️</button>
+      </div>
+    </div>
+
+    <button class="btn-add-root" (click)="addRootTopic()">+ Agregar tema raíz</button>
+  </div>
+</div>
