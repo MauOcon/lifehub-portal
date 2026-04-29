@@ -50,3 +50,13 @@
     ></app-learning-path-editor>
   </ng-container>
 </article>
+
+<!-- Modal de relaciones -->
+<app-topic-relation-editor
+  [visible]="relationModalVisible"
+  [goalName]="goal?.name ?? ''"
+  [topic]="selectedTopic"
+  [currentRelations]="topicRelations"
+  (onSave)="handleRelationSave($event)"
+  (onClose)="handleRelationClose()"
+></app-topic-relation-editor>

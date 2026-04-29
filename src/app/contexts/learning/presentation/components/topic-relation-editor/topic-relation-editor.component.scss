@@ -1,0 +1,223 @@
+@use '../../../../../../styles/abstracts/variables' as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: $space-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: $space-xs;
+
+  &:hover {
+    background-color: $color-gray-05;
+    border-radius: 4px;
+  }
+}
+
+// Info del tema
+.topic-info {
+  p {
+    margin: $space-xs 0;
+  }
+}
+
+.coverage-bar {
+  position: relative;
+  height: 28px;
+  background-color: $color-gray-10;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: $space-sm;
+}
+
+.coverage-fill {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.coverage-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.coverage-full .coverage-fill {
+  background-color: #a5d6a7;
+}
+
+.coverage-partial .coverage-fill {
+  background-color: #fff176;
+}
+
+.coverage-over .coverage-fill {
+  background-color: #ef9a9a;
+}
+
+.coverage-none .coverage-fill {
+  background-color: $color-gray-10;
+}
+
+// Secciones
+.relations-section,
+.search-section {
+  h4 {
+    margin: 0 0 $space-sm;
+  }
+}
+
+// Tablas
+.relations-table,
+.resources-table,
+.syllabus-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: $space-sm;
+    text-align: left;
+    background-color: $color-gray-05;
+    border-bottom: 2px solid $color-gray-10;
+    font-size: 0.9rem;
+  }
+
+  td {
+    padding: $space-sm;
+    border-bottom: 1px solid $color-gray-05;
+  }
+}
+
+.total-row {
+  background-color: $color-gray-05;
+}
+
+.input-percentage {
+  width: 70px;
+  padding: $space-xs;
+  border: 1px solid $color-gray-15;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+
+  &:hover {
+    background-color: #ffebee;
+    border-radius: 4px;
+  }
+}
+
+// Recursos clickeables
+.resources-table tbody tr {
+  cursor: pointer;
+
+  &:hover {
+    background-color: $color-gray-05;
+  }
+
+  &.selected {
+    background-color: $color-gray-10;
+  }
+}
+
+.section-label {
+  font-weight: 600;
+  margin: $space-sm 0 $space-xs;
+}
+
+.syllabus-list {
+  margin-top: $space-sm;
+}
+
+.btn-add-relation {
+  padding: $space-xs $space-sm;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+
+  &:hover {
+    background-color: #1976d2;
+  }
+}
+
+.already-related {
+  color: $color-gray-dark;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+.empty-message,
+.loading-message {
+  color: $color-gray-dark;
+  padding: $space-sm;
+}
+
+// Footer
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-sm;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: $space-sm $space-md;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-save {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: #f44336;
+  color: white;
+}

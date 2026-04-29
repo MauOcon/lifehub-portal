@@ -12,6 +12,8 @@ import { GoalDetailRepository } from './contexts/learning/domain/repositories/go
 import { GoalDetailMockRepository } from './contexts/learning/infrastructure/repositories/goal-detail-mock.repository';
 import { LearningPathRepository } from './contexts/learning/domain/repositories/learning-path.repository';
 import { LearningPathMockRepository } from './contexts/learning/infrastructure/repositories/learning-path-mock.repository';
+import { TopicRelationRepository } from './contexts/learning/domain/repositories/topic-relation.repository';
+import { TopicRelationMockRepository } from './contexts/learning/infrastructure/repositories/topic-relation-mock.repository';
 import { ResourceRepository } from './contexts/learning/domain/repositories/resource.repository';
 import { ResourceApiRepository } from './contexts/learning/infrastructure/repositories/resource-api.repository';
 
@@ -24,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     { provide: GoalRepository, useClass: GoalApiRepository },
     { provide: GoalDetailRepository, useClass: GoalDetailMockRepository },
     { provide: LearningPathRepository, useClass: LearningPathMockRepository },
+    { provide: TopicRelationRepository, useClass: TopicRelationMockRepository },
     { provide: ResourceRepository, useClass: ResourceApiRepository },
   ],
 };
