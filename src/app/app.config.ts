@@ -8,6 +8,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app.routes';
 import { GoalRepository } from './contexts/learning/domain/repositories/goal.repository';
 import { GoalApiRepository } from './contexts/learning/infrastructure/repositories/goal-api.repository';
+import { GoalDetailRepository } from './contexts/learning/domain/repositories/goal-detail.repository';
+import { GoalDetailMockRepository } from './contexts/learning/infrastructure/repositories/goal-detail-mock.repository';
 import { ResourceRepository } from './contexts/learning/domain/repositories/resource.repository';
 import { ResourceApiRepository } from './contexts/learning/infrastructure/repositories/resource-api.repository';
 
@@ -18,6 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     { provide: GoalRepository, useClass: GoalApiRepository },
+    { provide: GoalDetailRepository, useClass: GoalDetailMockRepository },
     { provide: ResourceRepository, useClass: ResourceApiRepository },
   ],
 };

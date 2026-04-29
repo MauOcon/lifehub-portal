@@ -3,6 +3,6 @@ export interface Goal {
   name: string;
   progress: number;
   activityDate: Date;
-  createdAt?: Date;
+  createdAtDate?: Date;
   updatedAt?: Date;
 }

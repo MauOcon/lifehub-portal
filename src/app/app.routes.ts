@@ -13,6 +13,13 @@ export const routes: Routes = [
           import('./contexts/learning/presentation/pages/goals/goals').then((m) => m.Goals),
       },
       {
+        path: 'learning/goals/:goalId',
+        loadComponent: () =>
+          import('./contexts/learning/presentation/pages/goal-detail/goal-detail').then(
+            (m) => m.GoalDetail,
+          ),
+      },
+      {
         path: 'learning/resources',
         loadComponent: () =>
           import('./contexts/learning/presentation/pages/resources/resources').then(

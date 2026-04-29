@@ -1,0 +1,39 @@
+<article class="goal-detail-container">
+  <button class="btn-back" (click)="goBack()">← Volver a metas</button>
+
+  <!-- Estado: Cargando -->
+  <div *ngIf="state === 'loading'" class="state-message">
+    <p>Cargando detalle de meta...</p>
+  </div>
+
+  <!-- Estado: Error -->
+  <div *ngIf="state === 'error'" class="state-message error">
+    <p>{{ errorMessage }}</p>
+    <button (click)="retry()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- Estado: Éxito -->
+  <ng-container *ngIf="state === 'success' && goal">
+    <h2 class="goal-name">{{ goal.name }}</h2>
+
+    <div class="goal-info-cards">
+      <div class="info-card">
+        <span class="info-label">Avance</span>
+        <span class="info-value">{{ goal.progress }}%</span>
+      </div>
+      <div class="info-card">
+        <span class="info-label">Última actividad</span>
+        <span class="info-value">
+          {{ goal.activityDate ? (goal.activityDate | date: 'dd/MM/yyyy') : 'Sin actividad' }}
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="goal.learningPathCoverage" class="coverage-card">
+      <span class="info-label">Cobertura</span>
+      <span class="info-value">
+        {{ goal.learningPathCoverage.coveredTopics }} de {{ goal.learningPathCoverage.totalTopics }} temas completos
+      </span>
+    </div>
+  </ng-container>
+</article>

@@ -1,0 +1,45 @@
+@use '../../../../../../styles/abstracts/variables' as *;
+
+.btn-back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: $space-xs;
+  color: $color-gray-dark;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.goal-name {
+  margin: $space-sm 0;
+}
+
+.goal-info-cards {
+  display: flex;
+  gap: $space-sm;
+}
+
+.info-card,
+.coverage-card {
+  display: flex;
+  flex-direction: column;
+  padding: $space-sm;
+  background-color: $color-gray-05;
+  border-radius: 4px;
+}
+
+.coverage-card {
+  margin-top: $space-sm;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: $color-gray-dark;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}

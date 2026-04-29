@@ -4,3 +4,11 @@
   padding: $space-xs;
   background-color: $color-gray-05;
 }
+
+.goals-table tr.clickable {
+  cursor: pointer;
+
+  &:hover td {
+    background-color: $color-gray-05;
+  }
+}

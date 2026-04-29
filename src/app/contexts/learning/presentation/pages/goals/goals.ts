@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { GetGoalsUseCase } from '../../../application/use-cases/get-goals.usecase';
 import { Goal } from '../../../domain/models/goal.model';
 
@@ -13,6 +14,7 @@ type LoadingState = 'loading' | 'success' | 'error';
 })
 export class Goals implements OnInit {
   private readonly getGoalsUseCase = inject(GetGoalsUseCase);
+  private readonly router = inject(Router);
 
   goals: Goal[] = [];
   state: LoadingState = 'loading';
@@ -35,6 +37,10 @@ export class Goals implements OnInit {
         this.errorMessage = this.getErrorMessage(error);
       },
     });
+  }
+
+  selectGoal(goal: Goal): void {
+    this.router.navigate(['/lifehub/learning/goals', goal.id]);
   }
 
   retry(): void {
