@@ -1,3 +1,5 @@
+import { LearningPathItem } from './learning-path-item.model';
+
 export interface GoalDetail {
   id: number;
   name: string;
@@ -7,4 +9,5 @@ export interface GoalDetail {
     totalTopics: number;
     coveredTopics: number;
   };
+  learningPath: LearningPathItem[];
 }

@@ -7,7 +7,7 @@ import { LearningPathRepository } from '../../domain/repositories/learning-path.
 export class SaveLearningPathUseCase {
   private readonly repository = inject(LearningPathRepository);
 
-  execute(goalId: number, items: LearningPathItem[]): Observable<void> {
+  execute(goalId: number, items: LearningPathItem[]): Observable<LearningPathItem[]> {
     return this.repository.save(goalId, items);
   }
 }

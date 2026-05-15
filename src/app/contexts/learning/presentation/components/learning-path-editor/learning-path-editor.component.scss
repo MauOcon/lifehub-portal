@@ -168,3 +168,35 @@
   background-color: #f44336;
   color: white;
 }
+
+// Estado de error
+.learning-path-error {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-sm;
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+  border-radius: 4px;
+  margin-bottom: $space-sm;
+
+  p {
+    margin: 0;
+    flex: 1;
+    color: #c62828;
+  }
+}
+
+.btn-reload {
+  padding: $space-xs $space-sm;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  background-color: #f44336;
+  color: white;
+
+  &:hover {
+    background-color: #d32f2f;
+  }
+}

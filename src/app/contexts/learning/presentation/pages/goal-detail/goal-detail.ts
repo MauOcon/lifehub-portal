@@ -2,7 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GetGoalDetailUseCase } from '../../../application/use-cases/get-goal-detail.usecase';
-import { GetLearningPathUseCase } from '../../../application/use-cases/get-learning-path.usecase';
 import { SaveLearningPathUseCase } from '../../../application/use-cases/save-learning-path.usecase';
 import { GetTopicRelationsUseCase } from '../../../application/use-cases/get-topic-relations.usecase';
 import { SaveTopicRelationsUseCase } from '../../../application/use-cases/save-topic-relations.usecase';
@@ -24,7 +23,6 @@ export class GoalDetail implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly getGoalDetailUseCase = inject(GetGoalDetailUseCase);
-  private readonly getLearningPathUseCase = inject(GetLearningPathUseCase);
   private readonly saveLearningPathUseCase = inject(SaveLearningPathUseCase);
   private readonly getTopicRelationsUseCase = inject(GetTopicRelationsUseCase);
   private readonly saveTopicRelationsUseCase = inject(SaveTopicRelationsUseCase);
@@ -35,7 +33,6 @@ export class GoalDetail implements OnInit {
   errorMessage = '';
 
   learningPath: LearningPathItem[] = [];
-  learningPathLoading = false;
 
   // Modal de relaciones
   relationModalVisible = false;
@@ -57,12 +54,29 @@ export class GoalDetail implements OnInit {
     this.loadGoalDetail(this.goalId);
   }
 
+  learningPathError = false;
+
   handleLearningPathSave(items: LearningPathItem[]): void {
+    this.learningPathError = false;
     this.saveLearningPathUseCase.execute(this.goalId, items).subscribe({
       next: () => {
-        this.learningPath = items;
+        this.reloadLearningPath();
       },
-      error: (err) => console.error('Error saving learning path:', err),
+      error: () => {
+        this.learningPathError = true;
+      },
+    });
+  }
+
+  reloadLearningPath(): void {
+    this.learningPathError = false;
+    this.getGoalDetailUseCase.execute(this.goalId).subscribe({
+      next: (goal) => {
+        this.learningPath = goal.learningPath;
+      },
+      error: () => {
+        this.learningPathError = true;
+      },
     });
   }
 
@@ -85,7 +99,6 @@ export class GoalDetail implements OnInit {
 
     this.saveTopicRelationsUseCase.execute(this.selectedTopic.topicId, relations).subscribe({
       next: () => {
-        // Actualizar cobertura del tema en la ruta
         const topic = this.learningPath.find((t) => t.topicId === this.selectedTopic!.topicId);
         if (topic) {
           topic.coveragePercentage = relations.reduce((sum, r) => sum + r.coveragePercentage, 0);
@@ -106,26 +119,12 @@ export class GoalDetail implements OnInit {
     this.getGoalDetailUseCase.execute(goalId).subscribe({
       next: (goal) => {
         this.goal = goal;
+        this.learningPath = goal.learningPath;
         this.state = 'success';
-        this.loadLearningPath(goalId);
       },
       error: (error) => {
         this.state = 'error';
         this.errorMessage = error.error?.message || 'Ocurrió un error al cargar la meta.';
-      },
-    });
-  }
-
-  private loadLearningPath(goalId: number): void {
-    this.learningPathLoading = true;
-
-    this.getLearningPathUseCase.execute(goalId).subscribe({
-      next: (items) => {
-        this.learningPath = items;
-        this.learningPathLoading = false;
-      },
-      error: () => {
-        this.learningPathLoading = false;
       },
     });
   }

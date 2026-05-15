@@ -10,6 +10,12 @@
     </div>
   </div>
 
+  <!-- Estado: Error -->
+  <div *ngIf="hasError" class="learning-path-error">
+    <p>⚠️ Ocurrió un error al guardar la ruta de aprendizaje.</p>
+    <button class="btn-reload" (click)="reload()">Recargar</button>
+  </div>
+
   <!-- Modo Vista -->
   <div *ngIf="!editing" class="learning-path-view">
     <div *ngIf="items.length === 0" class="state-message empty">

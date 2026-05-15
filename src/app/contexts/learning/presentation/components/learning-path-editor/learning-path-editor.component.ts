@@ -13,19 +13,27 @@ import { LearningPathItem } from '../../../domain/models/learning-path-item.mode
 export class LearningPathEditorComponent {
   @Input() items: LearningPathItem[] = [];
   @Input() goalId = 0;
+  @Input() hasError = false;
   @Output() onSave = new EventEmitter<LearningPathItem[]>();
+  @Output() onReload = new EventEmitter<void>();
   @Output() onTopicRelationEdit = new EventEmitter<LearningPathItem>();
 
   editing = false;
   editableItems: LearningPathItem[] = [];
   private nextTopicId = 100;
+  private existingTopicIds = new Set<number>();
 
   get sortedItems(): LearningPathItem[] {
     return this.buildHierarchy(this.editing ? this.editableItems : this.items);
   }
 
+  reload(): void {
+    this.onReload.emit();
+  }
+
   startEdit(): void {
     this.editableItems = this.items.map((i) => ({ ...i }));
+    this.existingTopicIds = new Set(this.items.map((i) => i.topicId));
     this.nextTopicId = Math.max(...this.items.map((i) => i.topicId), 0) + 1;
     this.editing = true;
   }
@@ -36,7 +44,11 @@ export class LearningPathEditorComponent {
   }
 
   save(): void {
-    this.onSave.emit(this.editableItems);
+    const itemsToSave = this.editableItems.map((item) => ({
+      ...item,
+      topicId: this.existingTopicIds.has(item.topicId) ? item.topicId : 0,
+    }));
+    this.onSave.emit(itemsToSave);
     this.editing = false;
   }
 
@@ -141,11 +153,13 @@ export class LearningPathEditorComponent {
     return result;
   }
 
-  private addChildren(parent: LearningPathItem, items: LearningPathItem[], result: LearningPathItem[]): void {
-    const children = items.filter((i) => i.fatherId === parent.topicId).sort((a, b) => a.order - b.order);
+  private addChildren(parent: LearningPathItem, items: LearningPathItem[], result: LearningPathItem[], visited = new Set<number>()): void {
+    const children = items.filter((i) => i.fatherId === parent.topicId && i.topicId !== parent.topicId).sort((a, b) => a.order - b.order);
     for (const child of children) {
+      if (visited.has(child.topicId)) continue;
+      visited.add(child.topicId);
       result.push(child);
-      this.addChildren(child, items, result);
+      this.addChildren(child, items, result, visited);
     }
   }
 }

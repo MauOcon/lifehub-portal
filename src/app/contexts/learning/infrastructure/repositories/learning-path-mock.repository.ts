@@ -10,8 +10,8 @@ export class LearningPathMockRepository extends LearningPathRepository {
     return of(LEARNING_PATH_MOCK_DATA[goalId] ?? []).pipe(delay(300));
   }
 
-  override save(goalId: number, items: LearningPathItem[]): Observable<void> {
+  override save(goalId: number, items: LearningPathItem[]): Observable<LearningPathItem[]> {
     LEARNING_PATH_MOCK_DATA[goalId] = items;
-    return of(undefined).pipe(delay(300));
+    return of(items).pipe(delay(300));
   }
 }

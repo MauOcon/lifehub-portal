@@ -16,6 +16,8 @@ import { TopicRelationRepository } from './contexts/learning/domain/repositories
 import { TopicRelationMockRepository } from './contexts/learning/infrastructure/repositories/topic-relation-mock.repository';
 import { ResourceRepository } from './contexts/learning/domain/repositories/resource.repository';
 import { ResourceApiRepository } from './contexts/learning/infrastructure/repositories/resource-api.repository';
+import { LearningPathApiRepository } from './contexts/learning/infrastructure/repositories/learning-path-api.repository';
+import { GoalDetailApiRepository } from './contexts/learning/infrastructure/repositories/goal-detail-api.repository';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,8 +26,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     { provide: GoalRepository, useClass: GoalApiRepository },
-    { provide: GoalDetailRepository, useClass: GoalDetailMockRepository },
-    { provide: LearningPathRepository, useClass: LearningPathMockRepository },
+    { provide: GoalDetailRepository, useClass: GoalDetailApiRepository },
+    { provide: LearningPathRepository, useClass: LearningPathApiRepository },
     { provide: TopicRelationRepository, useClass: TopicRelationMockRepository },
     { provide: ResourceRepository, useClass: ResourceApiRepository },
   ],
