@@ -10,8 +10,11 @@ export class TopicRelationMockRepository extends TopicRelationRepository {
     return of(TOPIC_RELATION_MOCK_DATA[learningPathTopicId] ?? []).pipe(delay(300));
   }
 
-  override save(learningPathTopicId: number, relations: TopicResourceRelation[]): Observable<void> {
+  override save(
+    learningPathTopicId: number,
+    relations: TopicResourceRelation[],
+  ): Observable<TopicResourceRelation[]> {
     TOPIC_RELATION_MOCK_DATA[learningPathTopicId] = relations;
-    return of(undefined).pipe(delay(300));
+    return of(relations).pipe(delay(300));
   }
 }

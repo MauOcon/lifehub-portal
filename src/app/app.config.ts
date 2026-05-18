@@ -18,6 +18,7 @@ import { ResourceRepository } from './contexts/learning/domain/repositories/reso
 import { ResourceApiRepository } from './contexts/learning/infrastructure/repositories/resource-api.repository';
 import { LearningPathApiRepository } from './contexts/learning/infrastructure/repositories/learning-path-api.repository';
 import { GoalDetailApiRepository } from './contexts/learning/infrastructure/repositories/goal-detail-api.repository';
+import { TopicRelationApiRepository } from './contexts/learning/infrastructure/repositories/topic-relation-api.repository';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     { provide: GoalRepository, useClass: GoalApiRepository },
     { provide: GoalDetailRepository, useClass: GoalDetailApiRepository },
     { provide: LearningPathRepository, useClass: LearningPathApiRepository },
-    { provide: TopicRelationRepository, useClass: TopicRelationMockRepository },
+    { provide: TopicRelationRepository, useClass: TopicRelationApiRepository },
     { provide: ResourceRepository, useClass: ResourceApiRepository },
   ],
 };

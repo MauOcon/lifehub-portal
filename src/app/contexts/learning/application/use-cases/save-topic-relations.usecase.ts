@@ -7,7 +7,10 @@ import { TopicRelationRepository } from '../../domain/repositories/topic-relatio
 export class SaveTopicRelationsUseCase {
   private readonly repository = inject(TopicRelationRepository);
 
-  execute(learningPathTopicId: number, relations: TopicResourceRelation[]): Observable<void> {
+  execute(
+    learningPathTopicId: number,
+    relations: TopicResourceRelation[],
+  ): Observable<TopicResourceRelation[]> {
     return this.repository.save(learningPathTopicId, relations);
   }
 }
