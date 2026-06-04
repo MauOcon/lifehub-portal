@@ -36,20 +36,53 @@
   &:last-child {
     border-bottom: none;
   }
+
+  &.topic-header {
+    font-weight: 700;
+    font-size: large;
+    background-color: $color-gray-05;
+    padding-left: $space-sm !important;
+  }
 }
 
 .topic-symbol {
   font-weight: 600;
-  min-width: 3rem;
+  width: 10rem;
+  flex-shrink: 0;
 }
 
 .topic-name {
   flex: 1;
 }
 
-.topic-coverage {
-  font-size: 1.15rem;
+.topic-progress {
+  width: 10rem;
+  flex-shrink: 0;
   white-space: nowrap;
+}
+
+.topic-coverage {
+  width: 10rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.topic-relation-header {
+  width: 10rem;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.progress-full {
+  color: #2e7d32;
+}
+
+.progress-partial {
+  color: #f57f17;
+}
+
+.progress-none {
+  color: #c62828;
 }
 
 .coverage-full {
@@ -70,6 +103,9 @@
   cursor: pointer;
   font-size: 1.5rem;
   padding: $space-xs;
+  width: 10rem;
+  flex-shrink: 0;
+  text-align: center;
 
   &:hover {
     background-color: $color-gray-05;

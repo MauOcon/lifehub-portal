@@ -4,5 +4,6 @@ export interface LearningPathItem {
   name: string;
   fatherId: number;
   order: number;
+  progressPercentage: number;
   coveragePercentage: number;
 }

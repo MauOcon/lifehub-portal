@@ -60,6 +60,7 @@ export class LearningPathEditorComponent {
       name: '',
       fatherId: 0,
       order: rootCount + 1,
+      progressPercentage: 0,
       coveragePercentage: 0,
     });
   }
@@ -72,6 +73,7 @@ export class LearningPathEditorComponent {
       name: '',
       fatherId: parent.topicId,
       order: childCount + 1,
+      progressPercentage: 0,
       coveragePercentage: 0,
     });
   }
@@ -117,6 +119,18 @@ export class LearningPathEditorComponent {
       current = parent;
     }
     return depth;
+  }
+
+  getProgressClass(percentage: number): string {
+    if (percentage === 100) return 'progress-full';
+    if (percentage > 0 && percentage < 100) return 'progress-partial';
+    return 'progress-none';
+  }
+
+  getProgressIcon(percentage: number): string {
+    if (percentage === 100) return '🟢';
+    if (percentage > 0 && percentage < 100) return '🟡';
+    return '🔴';
   }
 
   getCoverageClass(percentage: number): string {

@@ -11,7 +11,10 @@
       <p><strong>Meta:</strong> {{ goalName }}</p>
       <p><strong>Tema:</strong> {{ topic?.hierarchicalSymbol }} {{ topic?.name }}</p>
       <div class="coverage-bar" [ngClass]="coverageClass">
-        <div class="coverage-fill" [style.width.%]="totalCoverage > 100 ? 100 : totalCoverage"></div>
+        <div
+          class="coverage-fill"
+          [style.width.%]="totalCoverage > 100 ? 100 : totalCoverage"
+        ></div>
         <span class="coverage-text">Cobertura: {{ totalCoverage }}%</span>
       </div>
     </div>
@@ -50,7 +53,9 @@
           </tr>
           <tr class="total-row">
             <td colspan="2"><strong>Total</strong></td>
-            <td><strong>{{ totalCoverage }}%</strong></td>
+            <td>
+              <strong>{{ totalCoverage }}%</strong>
+            </td>
             <td></td>
           </tr>
         </tbody>

@@ -8,6 +8,8 @@ export class GetGoalDetailUseCase {
   private readonly repository = inject(GoalDetailRepository);
 
   execute(goalId: number): Observable<GoalDetail> {
-    return this.repository.getById(goalId);
+    console.log('Fetching goal detail for ID:', goalId);
+    let goalDetail: Observable<GoalDetail> = this.repository.getById(goalId);
+    return goalDetail;
   }
 }

@@ -221,12 +221,13 @@ export class Resources implements OnInit {
       const update = updateMap.get(item.topicId);
       if (!update) return item;
 
-      return {
-        ...item,
-        ...(update.topicName != null && { name: update.topicName }),
-        ...(update.hierarchicalNumber != null && { number: update.hierarchicalNumber }),
-        ...(update.progressValue != null && { progress: update.progressValue }),
-      };
+      const updated = { ...item };
+      if (update.topicName != null) updated.name = update.topicName;
+      if (update.progressValue != null) updated.progress = update.progressValue;
+      if (update.hierarchicalNumber != null) updated.number = update.hierarchicalNumber;
+      if (update.fatherShareValue != null) updated.fatherShareValue = update.fatherShareValue;
+
+      return updated;
     });
   }
 

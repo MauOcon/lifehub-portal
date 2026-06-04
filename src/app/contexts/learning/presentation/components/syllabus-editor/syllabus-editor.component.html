@@ -15,9 +15,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of syllabus">
-          <td>{{ item.number }}</td>
-          <td>{{ item.name }}</td>
+        <tr *ngFor="let item of sortedSyllabus">
+          <td [style.padding-left.px]="getDepth(item) * 20">{{ item.number }}</td>
+          <td [style.padding-left.px]="getDepth(item) * 20">{{ item.name }}</td>
           <td>{{ item.progress }}%</td>
           <td>{{ item.activityDate ? (item.activityDate | date: 'dd/MM/yyyy') : '-' }}</td>
         </tr>
@@ -52,19 +52,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let topic of editableTopics; let i = index">
-          <td>
+        <tr *ngFor="let topic of sortedEditableTopics; let i = index">
+          <td [style.padding-left.px]="getDepth(topic) * 20">
             <input
               type="text"
               [(ngModel)]="topic.topicHierarchicalSymbol"
               placeholder="I, II, 1, 2..."
               class="input-symbol"
-              [class.modified]="isModified(topic.topicId, 'hierarchicalSymbol')"
-              (ngModelChange)="onFieldChange(topic.topicId, 'hierarchicalSymbol')"
+              [class.modified]="isModified(topic.topicId, 'topicHhierarchicalSymbol')"
+              (ngModelChange)="onFieldChange(topic.topicId, 'topicHierarchicalSymbol')"
               (keydown)="handleKeyDown($event, i)"
             />
           </td>
-          <td>
+          <td [style.padding-left.px]="getDepth(topic) * 20">
             <input
               type="text"
               [(ngModel)]="topic.name"

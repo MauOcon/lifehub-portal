@@ -142,6 +142,61 @@ export class SyllabusEditorComponent implements OnChanges {
     return parent?.topicHierarchicalSymbol ?? '';
   }
 
+  get sortedSyllabus(): SyllabusItem[] {
+    return this.buildHierarchy(this.syllabus, 'fatherId', 'topicId');
+  }
+
+  get sortedEditableTopics(): EditableTopic[] {
+    return this.buildHierarchy(this.editableTopics, 'fatherId', 'topicId');
+  }
+
+  getDepth(item: { fatherId: number; topicId: number }): number {
+    const source: any[] = this.isEditable ? this.editableTopics : this.syllabus;
+    let depth = 0;
+    let currentFatherId = item.fatherId;
+    while (currentFatherId !== 0) {
+      const parent = source.find((i) => i.topicId === currentFatherId);
+      if (!parent) break;
+      depth++;
+      currentFatherId = parent.fatherId;
+    }
+    return depth;
+  }
+
+  private buildHierarchy<T extends { fatherId: number; topicId: number }>(
+    items: T[],
+    fatherKey: keyof T,
+    idKey: keyof T,
+  ): T[] {
+    const result: T[] = [];
+    const ids = new Set(items.map((i) => i[idKey] as number));
+    const roots = items.filter((i) => i[fatherKey] === 0 || !ids.has(i[fatherKey] as number));
+    for (const root of roots) {
+      result.push(root);
+      this.addChildren(root, items, result, idKey, fatherKey);
+    }
+    return result;
+  }
+
+  private addChildren<T extends { fatherId: number; topicId: number }>(
+    parent: T,
+    items: T[],
+    result: T[],
+    idKey: keyof T,
+    fatherKey: keyof T,
+    visited = new Set<number>(),
+  ): void {
+    const children = items.filter(
+      (i) => i[fatherKey] === parent[idKey] && i[idKey] !== parent[idKey],
+    );
+    for (const child of children) {
+      if (visited.has(child[idKey] as number)) continue;
+      visited.add(child[idKey] as number);
+      result.push(child);
+      this.addChildren(child, items, result, idKey, fatherKey, visited);
+    }
+  }
+
   save(): void {
     if (this.isEditMode) {
       const result = this.editableTopics
@@ -154,7 +209,7 @@ export class SyllabusEditorComponent implements OnChanges {
           topicId: t.topicId,
           order: t.order,
           name: this.modifiedFields.has(`${t.topicId}-name`) ? t.name : null,
-          topicHierarchicalSymbol: this.modifiedFields.has(`${t.topicId}-hierarchicalSymbol`)
+          topicHierarchicalSymbol: this.modifiedFields.has(`${t.topicId}-topicHierarchicalSymbol`)
             ? t.topicHierarchicalSymbol
             : null,
           fatherId: t.fatherId,

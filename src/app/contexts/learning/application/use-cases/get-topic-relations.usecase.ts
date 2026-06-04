@@ -8,6 +8,8 @@ export class GetTopicRelationsUseCase {
   private readonly repository = inject(TopicRelationRepository);
 
   execute(learningPathTopicId: number): Observable<TopicResourceRelation[]> {
-    return this.repository.getByTopicId(learningPathTopicId);
+    let relations: Observable<TopicResourceRelation[]> =
+      this.repository.getByTopicId(learningPathTopicId);
+    return relations;
   }
 }
